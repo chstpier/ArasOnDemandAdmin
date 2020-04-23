@@ -11,6 +11,8 @@ This Aras package adds 2 actions and an optional scheduled job.
 
 ### Installation
 
+This as been tested on Aras V12. It should work on earlier versions that support execution_allowed_to on Methods. In even earlier Aras versions, the check can be implemented within the method.
+
 Import the package using the Aras Import tool.
  1. Select the imports.mf file.
  2. In the 'Available for Import' section, select OnDemandAdmin.
@@ -33,11 +35,11 @@ Every hour, the job will revoke all users member on 'On Demand Admin' that have 
 		</job>
  3. Restart the scheduler service.
  
-
- 
  ### Usage
  
  1. Assign the On Demand Admin Identity to the users that need to perform administrator tasks.
  2. After the next login, those users will see the action to Elevate or Revoke Administrator privileges.
- 3. After the next login, those users will get their updated privileges.
+ 3. After the next login, those users will get their updated privileges(Emptying the browser cache is sometimes required to see the difference).
+ 
+ 
 
