@@ -1,0 +1,54 @@
+﻿<AML>
+ <Item type="Method" id="3C1294FD8EDB4A4AA3D3C550C44E0DDB" action="add">
+  <execution_allowed_to keyed_name="On Demand Admin" type="Identity">48158F8A74C34A3CA54301607D381DC5</execution_allowed_to>
+  <method_code><![CDATA[Innovator inn = this.getInnovator();
+var userid = inn.getUserID();
+var userIdentity = inn.newItem("Alias", "get");
+userIdentity.setAttribute("select", "related_id");
+userIdentity.setProperty("source_id", userid);
+userIdentity.setProperty("is_alias", "1");
+userIdentity = userIdentity.apply();
+if (userIdentity.isError())
+{
+	return userIdentity;
+}
+else
+{
+	var AdministratorsIdentityId = "2618D6F5A90949BAA7E920D1B04C7EE1";// ID for Administrators
+    var UserIdentityId = userIdentity.getProperty("related_id", String.Empty);
+    
+	var OnDemandAdminMembership = inn.newItem("Member", "get");
+	OnDemandAdminMembership.setProperty("source_id", AdministratorsIdentityId);
+	OnDemandAdminMembership.setProperty("related_id", UserIdentityId);
+	OnDemandAdminMembership = OnDemandAdminMembership.apply();
+	if (OnDemandAdminMembership.isError() && !OnDemandAdminMembership.isEmpty())
+	{
+		return OnDemandAdminMembership;
+	}
+	else if (OnDemandAdminMembership.isError()) //Membership does not exists
+	{
+		return inn.newResult("You are not currently elevated to Administrators.");
+	}
+	else
+	{
+		var adminsIdentity = inn.newItem("Identity", "edit");
+		adminsIdentity.setAttribute("id", AdministratorsIdentityId);
+		OnDemandAdminMembership.setAction("delete");
+		adminsIdentity.addRelationship(OnDemandAdminMembership);
+		adminsIdentity = adminsIdentity.apply();
+		if (adminsIdentity.isError())
+		{
+			return adminsIdentity;
+		}
+		else
+		{
+			return inn.newResult("You have successfully revoked yourself from Administrators. This will take effect at your next login.");
+		}
+	}
+}
+
+]]></method_code>
+  <method_type>C#</method_type>
+  <name>OnDemandAdmin_Revoke</name>
+ </Item>
+</AML>

@@ -1,0 +1,63 @@
+﻿<AML>
+ <Item type="Method" id="BF8478D6AF9A487C8A37EEA26C092126" action="add">
+  <execution_allowed_to keyed_name="On Demand Admin" type="Identity">48158F8A74C34A3CA54301607D381DC5</execution_allowed_to>
+  <method_code><![CDATA[Innovator inn = this.getInnovator();
+var userid = inn.getUserID();
+var AdministratorsIdentityId = "2618D6F5A90949BAA7E920D1B04C7EE1";// ID for Administrators
+
+var identities = Aras.Server.Security.Permissions.GetIdentitiesList(CCO.DB.InnDatabase, userid);
+if (!identities.Contains(AdministratorsIdentityId))
+{
+    var userIdentity = inn.newItem("Alias", "get");
+    userIdentity.setAttribute("select", "related_id");
+    userIdentity.setProperty("source_id", userid);
+    userIdentity.setProperty("is_alias", "1");
+    userIdentity = userIdentity.apply();
+    if (userIdentity.isError())
+    {
+        return userIdentity;
+    }
+
+    var UserIdentityId = userIdentity.getProperty("related_id",String.Empty);
+    
+    // Add a new membership
+    var adminsIdentity = inn.newItem("Identity", "edit");
+    adminsIdentity.setAttribute("id", AdministratorsIdentityId);
+    var addIdentity = inn.newItem("Member", "add");
+    addIdentity.setProperty("related_id", UserIdentityId);
+    adminsIdentity.addRelationship(addIdentity);
+    
+    Aras.Server.Security.Identity superUser = Aras.Server.Security.Identity.GetByName("Super User");
+    bool permissionWasSet = false;
+    
+    try
+    {
+        permissionWasSet = Aras.Server.Security.Permissions.GrantIdentity(superUser);
+        adminsIdentity = adminsIdentity.apply();
+        if (adminsIdentity.isError())
+        {
+            return adminsIdentity;
+        }
+        else
+        {
+            return inn.newResult("You have successfully elevated yourself to Administrators. This will take effect at your next login.");
+        }
+    }
+    finally
+    {
+        if (permissionWasSet)
+        {
+            Aras.Server.Security.Permissions.RevokeIdentity(superUser);
+        }
+    }
+}
+else
+{
+    return inn.newResult("You are already elevated to Administrators.");
+}
+
+]]></method_code>
+  <method_type>C#</method_type>
+  <name>OnDemandAdmin_Elevate</name>
+ </Item>
+</AML>

@@ -1,0 +1,16 @@
+﻿<AML>
+ <Item type="Action" id="2D766A2970DE42AF9C64243DC57AEB0E" action="add">
+  <item_query />
+  <label xml:lang="en">Elevate To Administrators</label>
+  <location>server</location>
+  <method keyed_name="OnDemandAdmin_Elevate" type="Method">
+   <Item type="Method" action="get" select="id">
+    <name>OnDemandAdmin_Elevate</name>
+   </Item>
+  </method>
+  <permission_id keyed_name="OnDemandAdmin" type="Permission">173AB8FD48D747DF89E0BDCDA3EF061B</permission_id>
+  <target>one window</target>
+  <type>generic</type>
+  <name>OnDemandAdmin_Elevate</name>
+ </Item>
+</AML>

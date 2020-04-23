@@ -1,0 +1,7 @@
+﻿<AML>
+ <Item type="Identity" id="48158F8A74C34A3CA54301607D381DC5" action="add">
+  <description>Role that allows self elevation to Administrator.</description>
+  <is_alias>0</is_alias>
+  <name>On Demand Admin</name>
+ </Item>
+</AML>

@@ -1,0 +1,30 @@
+﻿<AML>
+ <Item type="Permission" id="173AB8FD48D747DF89E0BDCDA3EF061B" action="add">
+  <is_private>0</is_private>
+  <name>OnDemandAdmin</name>
+  <Relationships>
+   <Item type="Access" id="5094B45879A6477F84E948DE951CADF6" action="add">
+    <can_change_access>0</can_change_access>
+    <can_delete>0</can_delete>
+    <can_discover>1</can_discover>
+    <can_get>1</can_get>
+    <can_update>0</can_update>
+    <related_id keyed_name="On Demand Admin" type="Identity">48158F8A74C34A3CA54301607D381DC5</related_id>
+    <show_permissions_warning>0</show_permissions_warning>
+    <sort_order>128</sort_order>
+    <source_id keyed_name="OnDemandAdmin" type="Permission">173AB8FD48D747DF89E0BDCDA3EF061B</source_id>
+   </Item>
+   <Item type="Access" id="9BB26FAE286B47ED80D95C950D7D7B8A" action="add">
+    <can_change_access>1</can_change_access>
+    <can_delete>1</can_delete>
+    <can_discover>1</can_discover>
+    <can_get>1</can_get>
+    <can_update>1</can_update>
+    <related_id keyed_name="Administrators" type="Identity">2618D6F5A90949BAA7E920D1B04C7EE1</related_id>
+    <show_permissions_warning>1</show_permissions_warning>
+    <sort_order>256</sort_order>
+    <source_id keyed_name="OnDemandAdmin" type="Permission">173AB8FD48D747DF89E0BDCDA3EF061B</source_id>
+   </Item>
+  </Relationships>
+ </Item>
+</AML>

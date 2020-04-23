@@ -1,0 +1,84 @@
+﻿<AML>
+ <Item type="Method" id="CCDA2A5B036F4870B657883C33D5C038" action="add">
+  <execution_allowed_to keyed_name="Administrators" type="Identity">2618D6F5A90949BAA7E920D1B04C7EE1</execution_allowed_to>
+  <method_code><![CDATA[if (System.Diagnostics.Debugger.Launch()) System.Diagnostics.Debugger.Break();
+
+Innovator inn = this.getInnovator();
+var OnDemandAdminIdentityId = "48158F8A74C34A3CA54301607D381DC5";// ID for On Demand Admin
+var AdministratorsIdentityId = "2618D6F5A90949BAA7E920D1B04C7EE1";// ID for Administrators
+
+// Get all the member of On Demand Admin
+var MembersOfOnDemandAdmin = inn.newItem("Member", "get");
+MembersOfOnDemandAdmin.setProperty("source_id", OnDemandAdminIdentityId);
+MembersOfOnDemandAdmin = MembersOfOnDemandAdmin.apply();
+if (MembersOfOnDemandAdmin.isError() && !MembersOfOnDemandAdmin.isEmpty()) //Real error
+{
+	return MembersOfOnDemandAdmin;
+}
+else if (MembersOfOnDemandAdmin.isError()) //Relationship does not exists
+{
+	return inn.newResult("The are no users memeber of On Demand Admin.");
+}
+else
+{
+	var MemberIdentities = new List<string>();
+
+	//Put into a string
+	for (int i = 0, iEnd = MembersOfOnDemandAdmin.getItemCount(); i < iEnd; i++)
+	{
+		var member = MembersOfOnDemandAdmin.getItemByIndex(i);
+		MemberIdentities.Add("'" + member.getProperty("related_id", string.Empty) + "'");
+	}
+
+	//Get the number of hours delay from variable
+	var delayQry = inn.newItem("Variable", "get");
+	delayQry.setID("9CA478E834A44AFBAA34542A4B1398CC");
+	double delay = 8; //Default to 8
+	delayQry = delayQry.apply();
+	if (!delayQry.isError())
+	{
+		if (!Double.TryParse(delayQry.getProperty("value", "8"), out delay))
+		{
+			delay = 8;
+		}
+	}
+
+	var maintenant = DateTime.Now;
+	var plusTot = maintenant.AddHours(-1* delay);
+	var plustotString = plusTot.ToString("yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
+
+	// Get all the member of Administrators for over X hours which are also part of On Demand Admin.
+	var MembersOfAdministrators = inn.newItem("Member", "get");
+	MembersOfAdministrators.setProperty("source_id", AdministratorsIdentityId);
+	MembersOfAdministrators.setProperty("related_id", string.Join(",", MemberIdentities));
+	MembersOfAdministrators.setPropertyAttribute("related_id", "condition", "IN");
+	MembersOfAdministrators.setProperty("created_on", plustotString);
+	MembersOfAdministrators.setPropertyAttribute("created_on", "condition", "lt");
+	MembersOfAdministrators = MembersOfAdministrators.apply();
+	if (MembersOfAdministrators.isError() && !MembersOfAdministrators.isEmpty()) //Real error
+	{
+		return MembersOfAdministrators;
+	}
+	else if (MembersOfOnDemandAdmin.isError()) //Relationship does not exists
+	{
+		return inn.newResult("The are no users member of On Demand Admin and Administrators.");
+	}
+	else
+	{
+		//For each element call delete
+		for (int i = 0, iEnd = MembersOfAdministrators.getItemCount(); i < iEnd; i++)
+		{
+			var MemberToRevoke = MembersOfAdministrators.getItemByIndex(i);
+			MemberToRevoke.setAction("delete");
+			MemberToRevoke.apply();
+		}
+		
+		return inn.newResult(MembersOfAdministrators.getItemCount()+" members of revoked.");
+	}
+}
+
+]]></method_code>
+  <method_type>C#</method_type>
+  <name>OnDemandAdmin_RevokeAll</name>
+ </Item>
+</AML>
